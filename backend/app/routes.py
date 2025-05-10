@@ -2,6 +2,9 @@ from fastapi import APIRouter
 from .database import trips_collection
 
 router = APIRouter()
+@router.get("/")
+def root():
+    return {"message": "Backend is running!"}
 
 @router.get("/trips")
 def get_trips():
