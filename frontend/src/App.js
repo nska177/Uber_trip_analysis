@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { api } from './api';
 import { Bar } from 'react-chartjs-2';
@@ -64,7 +64,7 @@ function App() {
     }
   };
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     const filtered = allTrips.filter(t => {
       const fare = parseFloat(t.fare_inr);
       const matchVehicle = vehicleFilter ? t.vehicle_type === vehicleFilter : true;
@@ -78,7 +78,7 @@ function App() {
     });
     setTrips(filtered);
     setCurrentPage(1);
-  };
+  }, [allTrips, vehicleFilter, minFare, maxFare, ratingFilter, paymentMethod, search]);
 
   const resetFilters = () => {
     setVehicleFilter('');
@@ -90,10 +90,9 @@ function App() {
     setCurrentPage(1);
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     applyFilters();
-  }, [vehicleFilter, minFare, maxFare, ratingFilter, paymentMethod, search, allTrips]);
+  }, [applyFilters]); // ✅ Netlify-friendly dependency
 
   const indexOfLastTrip = currentPage * tripsPerPage;
   const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
